@@ -1,0 +1,48 @@
+:root {
+  --bg: #fdf6e3;
+  --green: #008080;
+  --red: #ff4500;
+  --yellow: #ffd700;
+  --dark-green: #556b2f;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+*:has(::before, ::after) {
+  box-sizing: border-box;
+}
+img,
+video,
+picture {
+  max-width: 100%;
+}
+ul,
+ol {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+}
+input,
+textarea {
+  outline: none;
+  display: block;
+}
+button {
+  user-select: none;
+}
+
+/* jaldi-regular - latin */
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: "Jaldi";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../fonts/jaldi-v12-latin-regular.woff2") format("woff2"); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+}
+
+body {
+  font-family: "Jaldi", system-ui, sans-serif;
+}
