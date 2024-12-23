@@ -10,10 +10,33 @@ let board = [
   ["-", "-", "-"],
   ["-", "-", "-"],
 ];
+let playingMode;
+
+rematchBtn.onclick = () => {
+  // Reset the board
+  board = [
+    ["-", "-", "-"],
+    ["-", "-", "-"],
+    ["-", "-", "-"],
+  ];
+
+  // Return turns to default
+  turn = "X";
+  updateGrid(board);
+  // Reset game title
+  gameTitle.innerHTML = "ابدأ اللعب";
+
+  if (playingMode == "locally") {
+    playLocally();
+  } else {
+    playAgainstComputer();
+  }
+};
 
 gameModBtns.forEach((btn) => {
   btn.onclick = () => {
-    if (btn.getAttribute("data-mode") == "locally") {
+    playingMode = btn.getAttribute("data-mode");
+    if (playingMode == "locally") {
       playLocally();
     } else {
       playAgainstComputer();
@@ -27,7 +50,8 @@ function playLocally() {
   let gameState = checkGame(board);
   squares.forEach((square, i) => {
     square.onclick = () => {
-      if (gameState != "-1") {
+      if (gameState != -1) {
+        console.log(47);
         return;
       }
 
@@ -62,7 +86,7 @@ function playLocally() {
 
       // Change turns
       turn = changeTurn(turn);
-      gameTitle.innerHTML = `${turn} Turn`;
+      gameTitle.innerHTML = `دور اللاعب ${turn}`;
     };
   });
 }
@@ -72,7 +96,10 @@ function playAgainstComputer() {
 
   squares.forEach((square, i) => {
     square.onclick = () => {
-      if (gameState != -1) return;
+      if (gameState != -1) {
+        console.log(93);
+        return;
+      }
 
       // check if the box already played on
       if (square.getAttribute("data-item") != "") {
@@ -238,24 +265,6 @@ function playAgainstComputer() {
     return -1;
   }
 }
-
-rematchBtn.onclick = (n) => {
-  // Reset the board
-  board = [
-    ["-", "-", "-"],
-    ["-", "-", "-"],
-    ["-", "-", "-"],
-  ];
-
-  // Return turns to default
-  turn = "X";
-  updateGrid(board);
-
-  // Reset game title
-  gameTitle.innerHTML = "ابدأ اللعب";
-
-  gameState = checkGame(board);
-};
 
 // *: Helper functions starts here
 

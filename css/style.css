@@ -98,7 +98,15 @@ body {
 .grid {
   --_line-size: 5px;
   --_square-size: 150px;
+}
 
+@media (max-width: 500px) {
+  .grid {
+    --_square-size: 100px;
+  }
+}
+
+.grid {
   width: calc(var(--_square-size) * 3);
   background-color: var(--bg);
   position: relative;
