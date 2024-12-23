@@ -45,4 +45,83 @@ button {
 
 body {
   font-family: "Jaldi", system-ui, sans-serif;
+  background: var(--bg);
+  background-image: linear-gradient(#e5d4c3 1px, transparent 1px),
+    linear-gradient(90deg, #e5d4c3 1px, transparent 1px);
+  background-size: 50px 50px;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  max-width: min(600px, 90%);
+  margin-inline: auto;
+  text-align: center;
+}
+
+.grid {
+  --_line-size: 5px;
+  --_square-size: 150px;
+
+  width: calc(var(--_square-size) * 3);
+  background-color: var(--bg);
+  position: relative;
+  aspect-ratio: 1 / 1;
+  box-shadow: 0 0 14px 1px hsla(0, 0%, 0%, 0.502);
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.square {
+  all: unset;
+  width: var(--_square-size);
+  height: var(--_square-size);
+  box-shadow: 0 0 0 5px var(--dark-green);
+  background-color: var(--bg);
+  position: relative;
+  transition: background-color 150ms linear;
+  cursor: pointer;
+  &[data-item=""]:is(:hover, :focus) {
+    background-color: var(--yellow);
+  }
+  &:not([data-item=""]):is(:hover, :focus) {
+    cursor: not-allowed;
+  }
+}
+
+.square[data-item]::after {
+  content: attr(data-item);
+  position: absolute;
+  left: 50%;
+  top: 50;
+  translate: -50% -50%;
+  font-size: 4em;
+}
+
+.square[data-item="X"]::after {
+  color: var(--green);
+}
+.square[data-item="O"]::after {
+  color: var(--red);
+}
+
+.rematch {
+  all: unset;
+  cursor: pointer;
+  padding: 0.75rem 1.25rem;
+  border-radius: 5px;
+  background-color: var(--yellow);
+  margin-block-start: 2.5rem;
+  transition: 200ms;
+  font-size: 2.25em;
+  border: solid 5px transparent;
+  &:is(:hover, :focus) {
+    scale: 1.2;
+    border-radius: 0;
+    border-color: var(--dark-green);
+  }
 }
