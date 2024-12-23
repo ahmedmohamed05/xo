@@ -1,3 +1,5 @@
+// TODO: Add a score
+const gameModBtns = document.querySelectorAll(".mode-btns .btns button");
 const grid = document.querySelector(".grid");
 const squares = document.querySelectorAll(".square");
 const gameTitle = document.querySelector(".title");
@@ -9,48 +11,233 @@ let board = [
   ["-", "-", "-"],
 ];
 
-// Initiate game state
-let gameState = checkGame(board);
-
-squares.forEach((square, i) => {
-  square.onclick = () => {
-    if (gameState != "-1") {
-      return;
+gameModBtns.forEach((btn) => {
+  btn.onclick = () => {
+    if (btn.getAttribute("data-mode") == "locally") {
+      playLocally();
+    } else {
+      playAgainstComputer();
     }
-
-    // check if the box already played on
-    if (square.getAttribute("data-item") != "") {
-      // TODO: Send notification msg
-      alert("This box already played on");
-      return;
-    }
-
-    let success = play(i + 1, turn);
-
-    // Second level of safety
-    if (!success) {
-      // TODO: Send notification msg
-      alert("This box already played on");
-      return;
-    }
-
-    gameState = checkGame(board);
-    // The game end's and the winner is the current player turn
-    if (gameState == "1") {
-      gameTitle.innerHTML = `${turn} won !!!, Start a new match`;
-      return;
-    }
-
-    if (gameState == "0") {
-      gameTitle.innerHTML = "It's a DRAW, Start a new match";
-      return;
-    }
-
-    // Change turns
-    turn = changeTurn(turn);
-    gameTitle.innerHTML = `${turn} Turn`;
+    document.querySelector(".mode-btns").remove();
+    document.querySelector(".game").classList.remove("hidden");
   };
 });
+
+function playLocally() {
+  let gameState = checkGame(board);
+  squares.forEach((square, i) => {
+    square.onclick = () => {
+      if (gameState != "-1") {
+        return;
+      }
+
+      // check if the box already played on
+      if (square.getAttribute("data-item") != "") {
+        // TODO: Send notification msg
+        alert("هذا المربع ملعوب عليه مُسبقا");
+        return;
+      }
+
+      let success = play(i + 1, turn);
+
+      // Second level of safety
+      if (!success) {
+        // TODO: Send notification msg
+        alert("هذا المربع ملعوب عليه مُسبقا");
+        return;
+      }
+
+      gameState = checkGame(board);
+      // The game end's and the winner is the current player turn
+      if (gameState == "1") {
+        gameTitle.innerHTML = `فاز اللاعب ${turn} !!!, اضغط للعب مره اخرى`;
+        // TODO: Add animation to the winning squares
+        return;
+      }
+
+      if (gameState == "0") {
+        gameTitle.innerHTML = "تعادل !!!, اضغط للعب مره اخرى";
+        return;
+      }
+
+      // Change turns
+      turn = changeTurn(turn);
+      gameTitle.innerHTML = `${turn} Turn`;
+    };
+  });
+}
+
+function playAgainstComputer() {
+  let gameState = checkGame(board);
+
+  squares.forEach((square, i) => {
+    square.onclick = () => {
+      if (gameState != -1) return;
+
+      // check if the box already played on
+      if (square.getAttribute("data-item") != "") {
+        // TODO: Send notification msg
+        alert("هذا المربع ملعوب عليه مُسبقا");
+        return;
+      }
+
+      // !: REFACTOR this nonsense pleas
+      // Player plays
+      let playingPosition = i + 1;
+      let success = play(playingPosition, turn);
+      // Reload the page if something went wrong
+      if (!success) {
+        alert("عذراً حدث خطأ ما");
+        location.reload();
+      }
+      gameState = checkGame(board);
+      // The game end's and the winner is the current player turn
+      if (gameState == 1) {
+        gameTitle.innerHTML = "مبروك لقد فزت !!!!";
+        // TODO: Add animation to the winning squares
+        return;
+      }
+      if (gameState == 0) {
+        gameTitle.innerHTML = "تعادل !!!, اضغط اعادة اللعب";
+        return;
+      }
+      // Change turns
+      turn = changeTurn(turn);
+
+      // Computer Plays
+      playingPosition = getComputerMove(board);
+      success = play(playingPosition, turn);
+      // Reload the page if something went wrong
+      if (!success) {
+        alert("عذراً حدث خطأ ما");
+        location.reload();
+      }
+      gameState = checkGame(board);
+      // The game end's and the winner is the current player turn
+      if (gameState == 1) {
+        gameTitle.innerHTML = "لقد فاز الكمبيوتر, اضغط اعادة اللعب";
+        // TODO: Add animation to the winning squares
+        return;
+      }
+      if (gameState == 0) {
+        gameTitle.innerHTML = "تعادل !!!, اضغط اعادة اللعب";
+        return;
+      }
+      // Change turns
+      turn = changeTurn(turn);
+      gameTitle.innerHTML = `دورك ألعب`;
+    };
+  });
+
+  function getComputerMove(gameBoard) {
+    // Check Rows
+    {
+      let position = 0;
+      for (let i = 0; i < 3; i++) {
+        let userMarks = 0,
+          emptyBoxes = 0,
+          computerMarks = 0;
+        let updatePosition = true;
+        for (let j = 0; j < 3; j++) {
+          if (updatePosition) position++;
+
+          if (gameBoard[i][j] == "X") userMarks++;
+          if (gameBoard[i][j] == "O") computerMarks++;
+          if (gameBoard[i][j] == "-") {
+            emptyBoxes++;
+            position = j + (i * 3 + 1); // to correct the position
+            updatePosition = false;
+          }
+        }
+
+        if ((userMarks == 2 || computerMarks == 2) && emptyBoxes == 1)
+          return position;
+      }
+    }
+
+    // Check columns
+    {
+      let position = 0;
+      for (let i = 0; i < 3; i++) {
+        let userMarks = 0,
+          emptyBoxes = 0,
+          computerMarks = 0;
+        let updatePosition = true;
+        for (let j = 0; j < 3; j++) {
+          if (updatePosition) position++;
+          if (gameBoard[j][i] == "X") userMarks++;
+          if (gameBoard[j][i] == "O") computerMarks++;
+          if (gameBoard[j][i] == "-") {
+            emptyBoxes++;
+            position = j * 3 + i + 1; // to correct the position
+            updatePosition = false;
+          }
+        }
+
+        if ((userMarks == 2 || computerMarks == 2) && emptyBoxes == 1)
+          return position;
+      }
+    }
+
+    // Check main diagonal
+    {
+      let position = 0;
+      let userMarks = 0,
+        emptyBoxes = 0,
+        computerMarks = 0;
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          position++;
+          if (i == j) {
+            if (gameBoard[i][j] == "X") userMarks++;
+            if (gameBoard[i][j] == "-") emptyBoxes++;
+            if (gameBoard[i][j] == "O") computerMarks++;
+          }
+        }
+
+        if ((userMarks == 2 || computerMarks == 2) && emptyBoxes == 1)
+          return position;
+      }
+    }
+
+    // Anti-Diagonal
+    {
+      let position = 0,
+        userMarks = 0,
+        emptyBoxes = 0,
+        computerMarks = 0;
+      let updatePosition = true;
+      for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+          if (updatePosition) position++;
+          if (i + j == 2) {
+            if (gameBoard[i][j] == "X") userMarks++;
+            if (gameBoard[i][j] == "O") computerMarks++;
+            if (gameBoard[i][j] == "-") {
+              emptyBoxes++;
+              updatePosition = false;
+            }
+          }
+        }
+
+        if ((userMarks == 2 || computerMarks == 2) && emptyBoxes == 1)
+          return position;
+      }
+    }
+
+    let position = 0;
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        position++;
+        if (gameBoard[i][j] == "-") {
+          return position;
+        }
+      }
+    }
+
+    return -1;
+  }
+}
 
 rematchBtn.onclick = (n) => {
   // Reset the board
@@ -65,7 +252,7 @@ rematchBtn.onclick = (n) => {
   updateGrid(board);
 
   // Reset game title
-  gameTitle.innerHTML = "3X3 XO GAME";
+  gameTitle.innerHTML = "ابدأ اللعب";
 
   gameState = checkGame(board);
 };
@@ -157,12 +344,12 @@ function checkGame(gameBoard) {
   // game still on
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
-      if (gameBoard[i][j] == "-") return "-1";
+      if (gameBoard[i][j] == "-") return -1;
     }
   }
 
   // otherwise it is a draw
-  return "0";
+  return 0;
 }
 
 function changeTurn(currentTurn) {

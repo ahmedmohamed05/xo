@@ -31,7 +31,11 @@ textarea {
   display: block;
 }
 button {
+  display: block;
   user-select: none;
+}
+.hidden {
+  display: none !important;
 }
 
 /* jaldi-regular - latin */
@@ -59,6 +63,36 @@ body {
   max-width: min(600px, 90%);
   margin-inline: auto;
   text-align: center;
+}
+
+.btn {
+  all: unset;
+  cursor: pointer;
+  padding: 0.75rem 1.25rem;
+  border-radius: 5px;
+  background-color: var(--yellow);
+  margin-block-start: 2.5rem;
+  transition: 200ms;
+  font-size: 2.25em;
+  border: solid 5px transparent;
+  &:is(:hover, :focus) {
+    scale: 1.2;
+    border-radius: 0;
+    border-color: var(--dark-green);
+  }
+}
+
+.mode-btns .btns {
+  display: flex;
+  flex-direction: column;
+  & button {
+    font-size: 1.5em;
+  }
+}
+
+.game {
+  display: grid;
+  place-items: center;
 }
 
 .grid {
@@ -107,21 +141,4 @@ body {
 }
 .square[data-item="O"]::after {
   color: var(--red);
-}
-
-.rematch {
-  all: unset;
-  cursor: pointer;
-  padding: 0.75rem 1.25rem;
-  border-radius: 5px;
-  background-color: var(--yellow);
-  margin-block-start: 2.5rem;
-  transition: 200ms;
-  font-size: 2.25em;
-  border: solid 5px transparent;
-  &:is(:hover, :focus) {
-    scale: 1.2;
-    border-radius: 0;
-    border-color: var(--dark-green);
-  }
 }
